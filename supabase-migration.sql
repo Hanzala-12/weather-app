@@ -8,6 +8,9 @@ CREATE TABLE IF NOT EXISTS weather_searches (
   humidity INTEGER,
   wind_speed INTEGER,
   icon TEXT,
+  notes TEXT,
+  date_from DATE,
+  date_to DATE,
   searched_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -22,6 +25,11 @@ CREATE POLICY "Allow anonymous insert" ON weather_searches
 -- Allow anonymous select
 CREATE POLICY "Allow anonymous select" ON weather_searches
   FOR SELECT TO anon
+  USING (true);
+
+-- Allow anonymous update
+CREATE POLICY "Allow anonymous update" ON weather_searches
+  FOR UPDATE TO anon
   USING (true);
 
 -- Allow anonymous delete
