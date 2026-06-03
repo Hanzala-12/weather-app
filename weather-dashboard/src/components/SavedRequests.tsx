@@ -96,11 +96,15 @@ export default function SavedRequests({ currentLocation }: { currentLocation: st
 
   const handleDelete = async (id: string) => {
     try {
-      await fetch(api(`/api/history/${id}`), { method: 'DELETE' });
+      const res = await fetch(api(`/api/history/${id}`), { method: 'DELETE' });
+      if (!res.ok) {
+        console.warn('Backend delete failed', res.status);
+        return;
+      }
+      setRequests(prev => prev.filter(r => r.id !== id));
     } catch (e) {
       console.warn('Failed to delete on backend');
     }
-    setRequests(prev => prev.filter(r => r.id !== id));
   };
 
   const handleExportCSV = () => {

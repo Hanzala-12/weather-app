@@ -75,14 +75,16 @@ export async function getSearchHistory(): Promise<SearchRecord[]> {
   return [...store];
 }
 
-export async function deleteSearch(id: number): Promise<void> {
+export async function deleteSearch(id: number): Promise<{ success: boolean; error?: string }> {
   const supabase = await getClient();
   if (supabase) {
-    await supabase.from("weather_searches").delete().eq("id", id);
-    return;
+    const { error } = await supabase.from("weather_searches").delete().eq("id", id);
+    if (error) return { success: false, error: error.message };
+    return { success: true };
   }
   const idx = store.findIndex(r => r.id === id);
   if (idx !== -1) store.splice(idx, 1);
+  return { success: true };
 }
 
 export async function updateSearch(id: number, updates: Partial<Pick<SearchRecord, "city" | "date_from" | "date_to" | "notes">>): Promise<void> {

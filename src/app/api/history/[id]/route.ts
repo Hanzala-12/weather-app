@@ -13,7 +13,8 @@ export async function DELETE(
   const found = existing.find(r => r.id === numId);
   if (!found) return NextResponse.json({ error: "Record not found" }, { status: 404 });
 
-  await deleteSearch(numId);
+  const result = await deleteSearch(numId);
+  if (!result.success) return NextResponse.json({ error: result.error || "Delete failed" }, { status: 500 });
   return NextResponse.json({ success: true });
 }
 
