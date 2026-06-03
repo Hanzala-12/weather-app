@@ -1,0 +1,8 @@
+node_modules
+_node_modules
+_nm_old
+.next
+.vercel
+*.local
+.DS_Store
+.git

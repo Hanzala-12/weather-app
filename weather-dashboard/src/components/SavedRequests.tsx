@@ -10,6 +10,8 @@ export interface SavedRequest {
   notes: string;
 }
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 export default function SavedRequests({ currentLocation }: { currentLocation: string }) {
   const [requests, setRequests] = useState<SavedRequest[]>([]);
   const [isEditing, setIsEditing] = useState<string | null>(null);
@@ -21,10 +23,12 @@ export default function SavedRequests({ currentLocation }: { currentLocation: st
     setFormData(prev => ({ ...prev, location: currentLocation }));
   }, [currentLocation]);
 
+  const api = (path: string) => `${API_BASE}${path}`;
+
   const fetchHistory = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/history');
+      const res = await fetch(api('/api/history'));
       if (res.ok) {
         const data = await res.json();
         setRequests(data);
@@ -50,7 +54,7 @@ export default function SavedRequests({ currentLocation }: { currentLocation: st
 
     if (isEditing) {
       try {
-        const res = await fetch(`/api/history/${isEditing}`, {
+        const res = await fetch(api(`/api/history/${isEditing}`), {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
@@ -64,7 +68,7 @@ export default function SavedRequests({ currentLocation }: { currentLocation: st
       setIsEditing(null);
     } else {
       try {
-        const res = await fetch('/api/history', {
+        const res = await fetch(api('/api/history'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
@@ -92,7 +96,7 @@ export default function SavedRequests({ currentLocation }: { currentLocation: st
 
   const handleDelete = async (id: string) => {
     try {
-      await fetch(`/api/history/${id}`, { method: 'DELETE' });
+      await fetch(api(`/api/history/${id}`), { method: 'DELETE' });
     } catch (e) {
       console.warn('Failed to delete on backend');
     }
