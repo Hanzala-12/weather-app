@@ -116,6 +116,18 @@ export default function SavedRequests({ currentLocation }: { currentLocation: st
     downloadFile(JSON.stringify(requests, null, 2), 'searches.json', 'application/json');
   };
 
+  const handleExportMD = () => {
+    if (requests.length === 0) return;
+    const header = '| Location | Start Date | End Date | Notes |';
+    const sep = '|---|---|---|---|';
+    const rows = requests.map(req => {
+      const esc = (v: string) => v.replace(/\|/g, '\\|');
+      return `| ${esc(req.location)} | ${esc(req.startDate)} | ${esc(req.endDate)} | ${esc(req.notes)} |`;
+    });
+    const md = [header, sep, ...rows].join('\n');
+    downloadFile(md, 'searches.md', 'text/markdown');
+  };
+
   const downloadFile = (content: string, filename: string, type: string) => {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
@@ -151,6 +163,9 @@ export default function SavedRequests({ currentLocation }: { currentLocation: st
             </button>
             <button onClick={handleExportJSON} className="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-colors">
               <Download size={14} /> JSON
+            </button>
+            <button onClick={handleExportMD} className="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-colors">
+              <Download size={14} /> MD
             </button>
           </div>
         )}
