@@ -10,9 +10,9 @@ A weather dashboard built for the PM Accelerator AI Engineer Technical Assessmen
 
 | Layer | URL |
 |---|---|
-| **Frontend** (user interface) | [weather-dashboard-kappa-ten.vercel.app](https://weather-dashboard-kappa-ten.vercel.app) |
-| **Backend** (API server) | [weatherwise-backend-seven.vercel.app](https://weatherwise-backend-seven.vercel.app) |
-| **GitHub Repository** | [github.com/Hanzala-12/weather-app](https://github.com/Hanzala-12/weather-app) |
+| **Frontend** (user interface) | [https://weather-dashboard-kappa-ten.vercel.app](https://weather-dashboard-kappa-ten.vercel.app) |
+| **Backend** (API server) | [https://weatherwise-backend-seven.vercel.app](https://weatherwise-backend-seven.vercel.app) |
+| **GitHub Repository** | [https://github.com/Hanzala-12/weather-app](https://github.com/Hanzala-12/weather-app) |
 
 ---
 
@@ -59,7 +59,7 @@ A weather dashboard built for the PM Accelerator AI Engineer Technical Assessmen
 
 ## Architecture
 
-The project is a single full-stack system with two applications that communicate via API.
+WeatherWise is a full-stack weather application consisting of a React frontend and a Next.js backend connected through REST APIs.
 
 ```
 Root (Backend — Next.js 15)
@@ -184,10 +184,36 @@ Both applications are deployed on Vercel:
 | **Frontend** | [weather-dashboard-kappa-ten.vercel.app](https://weather-dashboard-kappa-ten.vercel.app) | Vite (`vercel.json`) |
 | **Backend** | [weatherwise-backend-seven.vercel.app](https://weatherwise-backend-seven.vercel.app) | Next.js (auto-detected) |
 
-Environment variables are configured via `vercel env add` for each project.
+Required environment variables are documented above.
+
+---
+
+## Assessment Requirement Coverage
+
+✅ Current weather
+
+✅ City search
+
+✅ ZIP code search
+
+✅ GPS location support
+
+✅ 7-day forecast
+
+✅ CRUD operations
+
+✅ Database persistence
+
+✅ Error handling
+
+✅ Data export
+
+✅ Additional API integrations (Maps, YouTube)
+
+✅ Responsive design
 
 ---
 
 ## Project Status
 
-All core features are implemented with zero TypeScript errors and clean builds across both frontend and backend. Deployed on Vercel.
+All assessment requirements have been implemented and tested, including weather search, forecasting, CRUD operations, data persistence, export functionality, and third-party API integrations. The application is deployed and accessible through the live demo links above.
