@@ -1,25 +1,18 @@
 # WeatherWise — Full-Stack Weather Intelligence Dashboard
 
-A production-grade full-stack weather dashboard featuring real-time weather via Open-Meteo, persistent search history via Supabase, interactive maps, travel insights, YouTube travel videos, and multi-format data export.
+A weather dashboard built for the PM Accelerator AI Engineer Technical Assessment. It displays real-time weather data, forecasts, and interactive maps, and supports saved search history with Supabase persistence and multi-format data export.
 
 **Built by Hanzala Yaqoob · PM Accelerator Candidate**
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-4f46e5?style=for-the-badge)](https://weather-dashboard-kappa-ten.vercel.app)
-[![Backend API](https://img.shields.io/badge/Backend-API-0ea5e9?style=for-the-badge)](https://weatherwise-backend-seven.vercel.app)
-[![GitHub](https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github)](https://github.com/Hanzala-12/weather-app)
-
 ---
 
-## System Overview
+## Live Demo
 
-WeatherWise is a **single integrated full-stack system** composed of two applications deployed on Vercel:
-
-| Layer | Technology | Live URL |
-|---|---|---|
-| **Frontend** (user interface) | Vite 6 + React 19 | [weather-dashboard-kappa-ten.vercel.app](https://weather-dashboard-kappa-ten.vercel.app) |
-| **Backend** (API server) | Next.js 15 (App Router) | [weatherwise-backend-seven.vercel.app](https://weatherwise-backend-seven.vercel.app) |
-
-The frontend fetches weather data directly from Open-Meteo, maps from OpenStreetMap, and proxies `/api/*` CRUD requests to the backend via a configurable `VITE_API_URL`. During local development, the Vite dev server proxies to `localhost:3000`.
+| Layer | URL |
+|---|---|
+| **Frontend** (user interface) | [weather-dashboard-kappa-ten.vercel.app](https://weather-dashboard-kappa-ten.vercel.app) |
+| **Backend** (API server) | [weatherwise-backend-seven.vercel.app](https://weatherwise-backend-seven.vercel.app) |
+| **GitHub Repository** | [github.com/Hanzala-12/weather-app](https://github.com/Hanzala-12/weather-app) |
 
 ---
 
@@ -36,23 +29,14 @@ The frontend fetches weather data directly from Open-Meteo, maps from OpenStreet
 - **Current conditions** — Temperature, feels-like, humidity, wind speed, pressure, visibility, condition icon with WMO decoding
 - **12-hour forecast** — Hourly projection with precipitation probability badges and Recharts AreaChart
 - **7-day forecast** — Daily min/max temperatures with scaled range bars and WMO weather code icons
-- **Animated temperature counter** — Spring-animated number transitions on search
-- **Weather stats row** — Wind, humidity, feels-like, visibility, pressure in a compact layout
 
 ### Visual Experience
 - **Weather effects engine** — Dynamic sky gradients, volumetric clouds, canvas rain/snow/lightning, fog layers, wind streaks, night stars
-- **Weather simulator** — Persistent bottom dock to toggle between Live, Clouds, Fog, Rain, Snow, and Thunder to preview visual effects
+- **Weather simulator** — Bottom dock to toggle between Live, Clouds, Fog, Rain, Snow, and Thunder
 - **Animated loading screen** — Pulse-ring animation while detecting location
 - **Toast notifications** — Slide-in error and info toasts with auto-dismiss
 
-### Advanced Features
-- **Interactive map** — Leaflet with OpenStreetMap tiles, fly-to animation on location change
-- **Travel readiness score** — 0–100 rule-based score with dynamic recommendations (umbrella, sunscreen, wind warnings)
-- **Saved weather requests** — Save destinations with date ranges and notes; full CRUD with Supabase persistence and localStorage fallback
-- **YouTube travel videos** — City travel guides via YouTube Data API (falls back to a YouTube search link when no key is configured)
-- **Data export** — Download saved requests as CSV, JSON, or Markdown
-
-### Backend (CRUD)
+### Saved Requests (CRUD)
 | Operation | Endpoint | Method |
 |---|---|---|
 | **Create** | `/api/history` | POST |
@@ -60,87 +44,51 @@ The frontend fetches weather data directly from Open-Meteo, maps from OpenStreet
 | **Update** | `/api/history/:id` | PATCH |
 | **Delete** | `/api/history/:id` | DELETE |
 
-- Full server-side validation (dates, required fields, cross-field checks)
+- Server-side validation (dates, required fields, cross-field checks)
 - Supabase PostgreSQL persistence with automatic in-memory fallback
-- Frontend localStorage fallback when backend is unavailable
+- localStorage fallback when backend is unavailable
+- **Data export** — Download saved requests as CSV, JSON, or Markdown
 
-### Data Export
-| Format | Source | Details |
-|---|---|---|
-| **JSON** | Frontend + Backend | Formatted download |
-| **CSV** | Frontend + Backend | Properly escaped, BOM-aware |
-| **XML** | Backend (`/api/export`) | Server-side XML generation |
-| **Markdown** | Backend (`/api/export`) + Frontend (SavedRequests) | Markdown table |
+### Additional Capabilities
+- **Interactive map** — Leaflet with OpenStreetMap tiles, fly-to animation on location change
+- **Travel readiness score** — 0–100 rule-based score with dynamic recommendations (umbrella, sunscreen, wind warnings)
+- **YouTube travel videos** — City travel guides via YouTube Data API (falls back to a YouTube search link when no key is configured)
+- **Multi-format data export** — JSON, CSV, XML, Markdown from frontend and/or backend
 
 ---
 
 ## Architecture
 
+The project is a single full-stack system with two applications that communicate via API.
+
 ```
-Root (Backend — Next.js 15 API server)
-├── src/
-│   ├── app/api/
-│   │   ├── export/route.ts          GET /api/export?city=&format=csv|json|xml|md
-│   │   └── history/
-│   │       ├── route.ts             GET (list), POST (create)
-│   │       └── [id]/route.ts        PATCH (update), DELETE (delete)
-│   └── lib/
-│       ├── supabase.ts              Supabase client + in-memory fallback store
-│       └── weather.ts               Open-Meteo + OpenWeatherMap API integration
-├── supabase-migration.sql           PostgreSQL schema for weather_searches
-├── .vercelignore                    Vercel deployment ignore rules
-├── .env.local                       Backend environment variables (gitignored)
-├── package.json                     Backend dependencies
-├── next.config.ts                   Next.js configuration
+Root (Backend — Next.js 15)
+├── src/app/api/            REST API routes (history CRUD, export)
+├── src/lib/                Supabase client, Open-Meteo integration
+├── supabase-migration.sql  PostgreSQL schema
+├── package.json
+├── next.config.ts
 └── tsconfig.json
 
-weather-dashboard/                   Frontend (Vite 6 + React 19)
-├── src/
-│   ├── App.tsx                      Main app (493 lines): routing, state, layout
-│   ├── main.tsx                     React entry point
-│   ├── index.css                    Tailwind CSS v4 + glass-panel classes
-│   ├── lib/
-│   │   └── weather.ts               Open-Meteo client, WMO decoder, ZIP search
-│   ├── components/
-│   │   ├── SearchBar.tsx            City / ZIP / coordinate search with autocomplete
-│   │   ├── WeatherEffects.tsx       Canvas-based weather particle system
-│   │   ├── HourlyForecast.tsx       12-hour projection with Recharts sparkline
-│   │   ├── WeekForecast.tsx         7-day forecast with temperature bars
-│   │   ├── MapSection.tsx           Leaflet interactive map with fly-to animation
-│   │   ├── TravelInsights.tsx       Rule-based travel readiness score (0–100)
-│   │   ├── YouTubeSection.tsx       Travel video results from YouTube API
-│   │   └── SavedRequests.tsx        CRUD table + CSV / JSON / MD export
-│   ├── vite-env.d.ts                ImportMeta type declarations
-├── index.html                       HTML shell
-├── vite.config.ts                   Vite config with /api proxy to :3000
-├── vercel.json                      Vite deployment configuration
-├── .env.example                     Frontend env var templates
-├── .gitignore                       Vercel .vercel dir ignored
-└── package.json                     Frontend dependencies
+weather-dashboard/          Frontend (Vite 6 + React 19)
+├── src/components/         SearchBar, WeatherEffects, HourlyForecast,
+│                           WeekForecast, MapSection, TravelInsights,
+│                           YouTubeSection, SavedRequests
+├── src/lib/                Open-Meteo client, WMO decoder, ZIP search
+├── src/App.tsx             Main app component
+├── src/index.css           Tailwind CSS v4 + glass-panel styles
+├── vite.config.ts          Dev proxy /api → localhost:3000
+├── vercel.json             Vite deployment config
+├── .env.example            Frontend env var templates
+└── package.json
 ```
 
 ### Data Flow
 
-```
-User Input (city / ZIP / GPS)
-        │
-        ▼
-SearchBar ──► Open-Meteo Geocoding (city search)
-            └─► OpenWeatherMap Geocoding (ZIP search)
-        │
-        ▼
-App.tsx ──► Open-Meteo Forecast API (free, no key needed)
-        │
-        ▼
-Weather Display + Stats + Hourly + Weekly Forecast + Map + Insights
-        │
-        ▼ (user saves a request)
-SavedRequests ──► /api/history (POST / PATCH / DELETE)
-                        │
-                        ▼
-                 Supabase PostgreSQL
-                 (or in-memory fallback)
-```
+- The frontend fetches weather data directly from **Open-Meteo** (free, no API key).
+- ZIP code searches call **OpenWeatherMap** for lat/lon conversion, then query Open-Meteo.
+- Saved requests are sent to the backend at `/api/history`, which persists to **Supabase PostgreSQL** (or an in-memory store if Supabase is not configured).
+- During development, the Vite dev server proxies `/api/*` to `localhost:3000`.
 
 ---
 
@@ -170,8 +118,6 @@ cd weather-dashboard
 npm run dev
 ```
 
-The frontend at `localhost:5173` proxies `/api/*` requests to the backend at `localhost:3000`.
-
 ### Database Setup (Optional)
 
 Run `supabase-migration.sql` in your Supabase SQL Editor to create the `weather_searches` table with Row Level Security policies. If Supabase is not configured, the app falls back to an in-memory store automatically.
@@ -179,8 +125,6 @@ Run `supabase-migration.sql` in your Supabase SQL Editor to create the `weather_
 ---
 
 ## Environment Variables
-
-Configuration is split between the two applications based on which process reads the value.
 
 ### Backend (`/.env.local`)
 
@@ -207,13 +151,13 @@ Injected at build time via `import.meta.env`. Only variables prefixed with `VITE
 
 ## APIs Used
 
-| API | Purpose | Auth | Usage |
-|---|---|---|---|
-| **Open-Meteo** | Weather data (current, hourly, daily) + geocoding | Free, no key | Primary weather data source |
-| **OpenWeatherMap** | ZIP code → lat/lon conversion | API key | ZIP search only |
-| **OpenStreetMap** | Map tiles for Leaflet | Free | Interactive map |
-| **YouTube Data API v3** | City travel videos | API key (optional) | Video recommendations |
-| **Supabase** | PostgreSQL database | API keys (optional) | Persistent CRUD storage |
+| API | Purpose | Auth |
+|---|---|---|
+| **Open-Meteo** | Weather data (current, hourly, daily) + geocoding | Free, no key |
+| **OpenWeatherMap** | ZIP code → lat/lon conversion | API key |
+| **OpenStreetMap** | Map tiles for Leaflet | Free |
+| **YouTube Data API v3** | City travel videos | API key (optional) |
+| **Supabase** | PostgreSQL database | API keys (optional) |
 
 ---
 
@@ -237,8 +181,8 @@ Both applications are deployed on Vercel:
 
 | App | URL | Config |
 |---|---|---|
-| **Frontend** | [weather-dashboard-kappa-ten.vercel.app](https://weather-dashboard-kappa-ten.vercel.app) | `weather-dashboard/vercel.json` (Vite) |
-| **Backend** | [weatherwise-backend-seven.vercel.app](https://weatherwise-backend-seven.vercel.app) | Auto-detected Next.js |
+| **Frontend** | [weather-dashboard-kappa-ten.vercel.app](https://weather-dashboard-kappa-ten.vercel.app) | Vite (`vercel.json`) |
+| **Backend** | [weatherwise-backend-seven.vercel.app](https://weatherwise-backend-seven.vercel.app) | Next.js (auto-detected) |
 
 Environment variables are configured via `vercel env add` for each project.
 
@@ -246,4 +190,4 @@ Environment variables are configured via `vercel env add` for each project.
 
 ## Project Status
 
-All core features are implemented with zero TypeScript errors and clean builds across both frontend and backend. Deployed and production-ready.
+All core features are implemented with zero TypeScript errors and clean builds across both frontend and backend. Deployed on Vercel.
